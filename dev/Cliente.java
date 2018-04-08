@@ -97,12 +97,14 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
      * @throws IOException retorna IO Exception caso dê algum erro.
      */
     public void enviarMensagem(String msg) throws IOException {
-        if (msg.equals("Sair")){
+        if (msg.equals("DisconnectFromServer")){
             bfw.write("Desconectado \r\n");
             texto.append("Desconectado \r\n");
         } else {
-            bfw.write(msg + "\r\n");
-            texto.append(txtNome.getText() + " diz: " + txtMsg.getText() + "\r\n");
+            if(!msg.isEmpty()) {
+                bfw.write(msg + "\r\n");
+                texto.append(txtNome.getText() + ": " + txtMsg.getText() + "\r\n");
+            }
         }
 
         bfw.flush();
@@ -120,11 +122,10 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
         BufferedReader bfr = new BufferedReader(inr);
         String msg = "";
 
-        while (!"Sair".equalsIgnoreCase(msg)){
+        while (!"DisconnectFromServer".equalsIgnoreCase(msg)) {
             if(bfr.ready()){
                 msg = bfr.readLine();
-
-                if(msg.equals("Sair")){
+                if (msg.equals("DisconnectFromServer")) {
                     texto.append("Servidor caiu! \r\n");
                 } else {
                     texto.append(msg + "\r\n");
@@ -139,7 +140,7 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
      * @throws IOException retorna IO Exception caso dê algum erro.
      */
     public void sair() throws IOException {
-        enviarMensagem("Sair");
+        enviarMensagem("DisconnectFromServer");
         bfw.close();
         ouw.close();
         ou.close();
@@ -162,7 +163,7 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
                     sair();
                 }
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 

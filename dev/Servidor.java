@@ -25,6 +25,10 @@ public class Servidor extends Thread {
     private InputStreamReader inr;
     private BufferedReader bfr;
 
+    /**
+     * Método construtor
+     * @param con do tipo Socket
+     */
     public Servidor(Socket con) {
         this.con = con;
 
@@ -38,27 +42,28 @@ public class Servidor extends Thread {
         }
     }
 
+    /**
+     * Método run
+     */
     @Override
     public void run() {
         try {
 
             String msg;
-            OutputStream out = this.con.getOutputStream();
-            Writer outw = new OutputStreamWriter(out);
-            BufferedWriter bfw = new BufferedWriter(outw);
-
+            OutputStream ou =  this.con.getOutputStream();
+            Writer ouw = new OutputStreamWriter(ou);
+            BufferedWriter bfw = new BufferedWriter(ouw);
             clientes.add(bfw);
             nome = msg = bfr.readLine();
 
-            while (!"Sair".equalsIgnoreCase(msg) && msg != null) {
-
+            while(!"DisconnectFromServer".equalsIgnoreCase(msg) && msg != null) {
                 msg = bfr.readLine();
                 sendToAll(bfw, msg);
                 System.out.println(msg);
 
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -69,16 +74,17 @@ public class Servidor extends Thread {
      * @param msg do tipo String
      * @throws IOException
      */
-    private void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
-
+    public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
         BufferedWriter bwS;
 
         for (BufferedWriter bw : clientes){
 
-            bwS = (BufferedWriter) bw;
+            bwS = bw;
 
             if(!(bwSaida == bwS)){
-                bw.write(nome + " -> " + msg + "\r\n");
+                if(msg != null) {
+                    bw.write(nome + ": " + msg + "\r\n");
+                }
                 bw.flush();
             }
 
@@ -104,9 +110,10 @@ public class Servidor extends Thread {
                 Socket con = server.accept();
                 System.out.println("Cliente conectado...");
                 Thread t = new Servidor(con);
+                t.start();
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
