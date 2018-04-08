@@ -134,6 +134,18 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
 
     }
 
+    /***
+     * Método usado quando o usuário clica em sair
+     * @throws IOException retorna IO Exception caso dê algum erro.
+     */
+    public void sair() throws IOException {
+        enviarMensagem("Sair");
+        bfw.close();
+        ouw.close();
+        ou.close();
+        socket.close();
+    }
+
     /**
      * Invoked when an action occurs.
      *
@@ -141,6 +153,18 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        try {
+            if(e.getActionCommand().equals(btnSend.getActionCommand())){
+                enviarMensagem(txtMsg.getText());
+            } else {
+                if(e.getActionCommand().equals(btnSair.getActionCommand())) {
+                    sair();
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 
     }
 
@@ -165,7 +189,13 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
      */
     @Override
     public void keyPressed(KeyEvent e) {
-
+        if(e.getKeyCode() == e.VK_ENTER){
+            try {
+                enviarMensagem(txtMsg.getText());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -178,5 +208,16 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    /**
+     * Metodo main da classe cliente
+     * @param args
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException {
+        Cliente app = new Cliente();
+        app.conectar();
+        app.escutar();
     }
 }

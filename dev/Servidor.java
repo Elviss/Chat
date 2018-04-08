@@ -86,7 +86,7 @@ public class Servidor extends Thread {
 
     }
 
-    public void main(String[] args){
+    public static void main(String[] args){
 
         try {
             //Cria os objetos necessário para instânciar o servidor
