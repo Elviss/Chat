@@ -1,3 +1,7 @@
+package chatDois;
+
+import chatDois.Client;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 

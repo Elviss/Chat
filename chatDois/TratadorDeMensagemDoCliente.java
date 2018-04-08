@@ -1,12 +1,16 @@
+package chatDois;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
 
-public class RecebedorDeMensagemDoServidor implements Runnable {
+public class TratadorDeMensagemDoCliente implements Runnable {
 
-    private InputStream servidor;
+    private Socket cliente;
+    private Servidor servidor;
 
-    public RecebedorDeMensagemDoServidor(InputStream servidor) {
+    public TratadorDeMensagemDoCliente(Socket cliente, Servidor servidor) {
+        this.cliente = cliente;
         this.servidor = servidor;
     }
 
@@ -23,11 +27,12 @@ public class RecebedorDeMensagemDoServidor implements Runnable {
      */
     @Override
     public void run() {
-
-        try (Scanner s = new Scanner(this.servidor)){
+        try(Scanner s = new Scanner(this.cliente.getInputStream())) {
             while (s.hasNextLine()) {
-                System.out.println(s.nextLine());
+                servidor.distribuiMensagem(this.cliente, s.nextLine());
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
